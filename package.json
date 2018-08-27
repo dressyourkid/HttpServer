@@ -1,19 +1,24 @@
 {
   "name": "httpserver",
   "version": "1.0.0",
-  "description": "HttpServer for docker query",
+  "description": "RemoteScriptRunner for docker query",
   "main": "httpServer.js",
   "scripts": {
+    "start": "node ./httpServer.js",
+    "dev": "node ./httpServer.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dressyourkid/HttpServer.git"
+    "url": "git+https://github.com/dressyourkid/RemoteScriptRunner.git"
   },
   "author": "luckykeks",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/dressyourkid/HttpServer/issues"
+    "url": "https://github.com/dressyourkid/RemoteScriptRunner/issues"
   },
-  "homepage": "https://github.com/dressyourkid/HttpServer#readme"
+  "homepage": "https://github.com/dressyourkid/RemoteScriptRunner#readme",
+  "dependencies": {
+    "shelljs": "^0.8.2"
+  }
 }

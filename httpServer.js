@@ -1,33 +1,45 @@
 const http = require('http');
 const shell = require('shelljs');
 const fs = require('fs');
-const path = require('path');
-const Folder = './scripts';
+const folder = './scripts';
+const httpPort = process.env.PORT || 8080;
 
 const server = http.createServer(function (req, res) {
 	
 	if(req.method == 'POST') {
-		const cutUrlName = path.parse(req.url).name;
-			fs.readdir(Folder, (err, files) => {
-				let found = files.find(file => {
-					const cutFileName = file.toString().split('.').slice(0, -1).join('.');
-					if(cutFileName === cutUrlName){
-						return cutFileName;
-					}
-				});
-					if(found !== undefined){
-						let shellFileName = '".' + req.url  +'"';
-						shell.exec(shellFileName);
-						res.writeHead(200);
-					} else {
-						res.writeHead(404, {'Content-Type': 'text/html'});
-						res.write('Page 404 not found');
-					}
+		const cutUrlName = req.url.replace('/', '');
+		try {
+			let files = fs.readdirSync(folder);
+			let found = files.find(file => {
+				return file.toString() === cutUrlName;
 			});
+			if (found === undefined) {
+				notFoundResponse(res);
+				return;
+			}
+			let shellFileName = `${folder}${req.url}`;
+			let execResult = shell.exec(shellFileName);
+			if (execResult.code === 0) {
+				res.writeHead(500, {'Content-Type': 'Application/json'});
+				res.write(JSON.stringify({ error: execResult.code }));
+			} else {
+				res.writeHead(200, {'Content-Type': 'Application/json'});
+				res.write(JSON.stringify({ output: execResult.stdout }));
+			}
+			res.end();
+		} catch(err) {
+			res.writeHead(500, {'Content-Type': 'Application/json'});
+			res.write(JSON.stringify({ error: err }));
+			res.end();
+		}
 	} else {
-		res.writeHead(404, {'Content-Type': 'text/html'});
-		res.write('Page 404 not found');
-	}	
-    res.end();
-}).listen(8080);
+		notFoundResponse(res);
+	}
+}).listen(httpPort);
+
+function notFoundResponse(res) {
+	res.writeHead(404, {'Content-Type': 'Application/json'});
+	res.write(JSON.stringify({ message: 'Requested script not found' }));
+	res.end();
+}
 
