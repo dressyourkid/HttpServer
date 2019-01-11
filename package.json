@@ -4,7 +4,7 @@
   "description": "RemoteScriptRunner for docker query",
   "main": "httpServer.js",
   "scripts": {
-    "start": "node ./httpServer.js",
+    "start": "pm2 start ./httpServer.js",
     "dev": "node ./httpServer.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

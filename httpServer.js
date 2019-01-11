@@ -1,7 +1,7 @@
 const http = require('http');
 const shell = require('shelljs');
 const fs = require('fs');
-const folder = './scripts';
+const folder = process.env.SCRIPTS_DIR || './scripts';
 const httpPort = process.env.PORT || 8080;
 
 const server = http.createServer(function (req, res) {
@@ -10,6 +10,7 @@ const server = http.createServer(function (req, res) {
 		const cutUrlName = req.url.replace('/', '');
 		try {
 			let files = fs.readdirSync(folder);
+            console.log(folder, 'found', files);
 			let found = files.find(file => {
 				return file.toString() === cutUrlName;
 			});
@@ -17,7 +18,7 @@ const server = http.createServer(function (req, res) {
 				notFoundResponse(res);
 				return;
 			}
-			let shellFileName = `${folder}${req.url}`;
+			let shellFileName = `sudo sh ${folder}${req.url}`;
 			let execResult = shell.exec(shellFileName);
 			if (execResult.code === 0) {
 				res.writeHead(500, {'Content-Type': 'Application/json'});
